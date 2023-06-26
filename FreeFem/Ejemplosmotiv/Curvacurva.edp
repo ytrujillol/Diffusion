@@ -1,0 +1,31 @@
+// Parameters
+int inside = 2; 
+int outside = 1; 
+int n = 50;
+real d=0.1;
+func f=1.0;
+// Mesh
+border b1(t=0, 1){x=t; y=0;label=outside;};
+border b2(t=1, 0){x=0; y=t;label=outside;};
+border arc(t=3*pi/2, 2*pi){x=sin(t)+1; y=cos(t);label=inside;};
+border b3(t=1,0){x=t; y=1;label=outside;};
+border b4(t=0, 1){x=1; y=t;label=outside;};
+mesh Th = buildmesh(b1(n) + b2(n) + arc(n)+ b3(n) + b4(n));
+plot(Th, wait=true);
+
+// Fespace
+fespace Vh(Th, P2);
+Vh u, v,ux,uy;
+
+
+solve smoothcrack(u, v)
+  = int2d(Th)(dx(u)*dx(v) + dy(u)*dy(v))
+  +int1d(Th,inside)(-d*N.y*dx(u)*dx(v)+d*N.x*dy(u)*dy(v) )
+  - int2d(Th)(f*v)
+  + on(outside,u=0);
+plot(u, value=true, fill=true, wait=true);
+
+ux=dx(u);
+uy=dy(u);
+
+//plot(u, [ux, uy]);

@@ -1,0 +1,29 @@
+   14 : plot(Th, wait=true);
+   15 :
+   16 : // Fespace
+   17 : fespace Vh(Th, P2);
+   18 : Vh u, v,ux,uy;
+   19 :
+   20 : solve smoothcrack(u, v)
+   21 :   = int2d(Th)(dx(u)*dx(v) + dy(u)*dy(v))
+   22 :   +int1d(Th,inside)(-d*N.y*dx(u)*dx(v)+d*N.x*dy(u)*dy(v) )
+   23 :   - int2d(Th)(f*v)
+   24 :   + on(outside, u=0);
+   25 : plot(u, value=true, fill=true, wait=true);
+   26 :
+   27 : ux=dx(u);
+   28 : uy=dy(u);
+   29 :
+   30 : //plot(u, value=true, fill=true, wait=true);ÿ sizestack + 1024 =2536  ( 1512 )
+ 
+ Error in the definition of subdomain 1 boundary border 4/5: wrong direction 50 1
+ Error in the definition of subdomain 2 boundary border 3/5: wrong direction 100 1
+ Fatal error in the mesh generator 777
+  current line = 8
+Meshing error: Bamg
+ number : 777,
+ catch Err bamg
+Meshing error: Bamg
+ number : 777,
+ err code 5 ,  mpirank 0
+ try getConsole C:\Users\ytruj\OneDrive\Desktop\Unal\8 semestre\Numérico 2\Proyecto\kosh\FreeFem\Curvarecta.edp

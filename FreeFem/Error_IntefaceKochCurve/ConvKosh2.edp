@@ -1,0 +1,96 @@
+load "Element_P4"
+// Parameters
+int inside = 2; 
+int outside = 1;
+real d=0.1;
+func f = 1.0; //RHS
+real rate = 0; //Convergence rate
+
+int n = 4, k = 5; // n = number of refinements, points = # of points in each borders
+int nangles = 10;
+real[int] L2error(n), H1error(n);
+real[int] Ntraingles(n), Msize(n);
+real auxH1, auxL2, auxH1sol, auxL2sol;
+string namefile;
+
+//Solucion "Exacta"
+
+//Mesh
+border b1(t=0, 1){x=0; y=-t; label=outside;};
+border b2(t=0, 1){x=t; y=-1;label=outside;};
+border b3(t=0, 1){x=1; y=t-1;label=outside;};
+border b4(t=0, 1){x=1; y=t;label=outside;};
+border b5(t=0, 1){x=-t+1; y=1;label=outside;};
+border b6(t=0, 1){x=0; y=-t+1;label=outside;};
+border b7(t=0, 1){x= 0 + 0.1111111111111111 *t ; y= 0 + 0.0 *t;label=inside;};
+border b8(t=0, 1){x= 0.1111111111111111 + 0.05555555555555558 *t ; y= 0.0 + 0.09622504486493762 *t;label=inside;};
+border b9(t=0, 1){x= 0.16666666666666669 + 0.055555555555555525 *t ; y= 0.09622504486493762 + -0.09622504486493762 *t;label=inside;};
+border b10(t=0, 1){x= 0.2222222222222222 + 0.1111111111111111 *t ; y= 0.0 + 0.0 *t;label=inside;};
+border b11(t=0, 1){x= 0.3333333333333333 + 0.05555555555555558 *t ; y= 0.0 + 0.09622504486493764 *t;label=inside;};
+border b12(t=0, 1){x= 0.3888888888888889 + -0.05555555555555558 *t ; y= 0.09622504486493764 + 0.09622504486493759 *t;label=inside;};
+border b13(t=0, 1){x= 0.3333333333333333 + 0.1111111111111111 *t ; y= 0.19245008972987523 + 2.7755575615628914e-17 *t;label=inside;};
+border b14(t=0, 1){x= 0.4444444444444444 + 0.05555555555555558 *t ; y= 0.19245008972987526 + 0.09622504486493766 *t;label=inside;};
+border b15(t=0, 1){x= 0.5 + 0.05555555555555558 *t ; y= 0.2886751345948129 + -0.09622504486493766 *t;label=inside;};
+border b16(t=0, 1){x= 0.5555555555555556 + 0.11111111111111116 *t ; y= 0.19245008972987526 + 2.7755575615628914e-17 *t;label=inside;};
+border b17(t=0, 1){x= 0.6666666666666667 + -0.05555555555555558 *t ; y= 0.1924500897298753 + -0.09622504486493764 *t;label=inside;};
+border b18(t=0, 1){x= 0.6111111111111112 + 0.05555555555555558 *t ; y= 0.09622504486493764 + -0.09622504486493764 *t;label=inside;};
+border b19(t=0, 1){x= 0.6666666666666667 + 0.11111111111111105 *t ; y= 0.0 + 0.0 *t;label=inside;};
+border b20(t=0, 1){x= 0.7777777777777778 + 0.05555555555555558 *t ; y= 0.0 + 0.09622504486493766 *t;label=inside;};
+border b21(t=0, 1){x= 0.8333333333333334 + 0.05555555555555558 *t ; y= 0.09622504486493766 + -0.09622504486493766 *t;label=inside;};
+border b22(t=0, 1){x= 0.888888888888889 + 0.11111111111111105 *t ; y= 0.0 + 0.0 *t;label=inside;};
+
+int m = 60;
+mesh Th1 = buildmesh(b1(m) + b2(m) + b3(m) +  b4(m) + b5(m) + b6(m)  
++ b22(-m) + b21(-m) + b20(-m)+ b19(-m) + b18(-m) + b17(-m) + b16(-m) + b15(-m) + b14(-m) 
++ b13(-m) + b12(-m) + b11(-m) + b10(-m) + b9(-m) + b8(-m)+ b7(-m));
+//plot(Th1, wait=true);
+
+// Fespace
+fespace Vh1(Th1, P4);
+Vh1 usol, v1, dxusol, dyusol;
+
+solve smoothcrack(usol, v1)
+  = int2d(Th1)(dx(usol)*dx(v1) + dy(usol)*dy(v1))
+  +int1d(Th1,inside)(-d*N.y*dx(usol)*dx(v1)+d*N.x*dy(usol)*dy(v1)) - int2d(Th1)(f*v1) + on(outside,usol=0);
+//plot(usol, value=true, fill=true, wait=true);
+
+dxusol=dx(usol);
+dyusol=dy(usol);
+
+mesh Th = buildmesh(b1(k) + b2(k) + b3(k) +  b4(k) + b5(k) + b6(k)  
++ b22(-k) + b21(-k) + b20(-k)+ b19(-k) + b18(-k) + b17(-k) + b16(-k) + b15(-k) + b14(-k) 
++ b13(-k) + b12(-k) + b11(-k) + b10(-k) + b9(-k) + b8(-k)+ b7(-k));
+// Loop for refinements
+for(int i = 0; i < n; i++){
+    // Fespace
+    fespace Vh(Th, P1);
+    Vh  h = hTriangle;
+    Msize[i] = h[].max;
+    Vh u,v;
+    // Problem
+    solve smoothcrack(u, v)
+    = int2d(Th)(dx(u)*dx(v) + dy(u)*dy(v))
+    +int1d(Th,inside)(-d*N.y*dx(u)*dx(v)+d*N.x*dy(u)*dy(v) ) - int2d(Th)(f*v) + on(outside,u=0);
+    //plot(u, value=true, fill=true, wait=true);
+
+    auxL2 = int2d(Th)((u - usol)^2);
+    auxL2sol = int2d(Th)((usol)^2);
+    auxH1 = int2d(Th)((dx(u) - dxusol)^2 + (dy(u) - dyusol)^2);
+    auxH1sol = int2d(Th)((dxusol)^2 + (dyusol)^2);
+    L2error[i] = sqrt(auxL2/auxL2sol);
+    H1error[i] = sqrt(auxL2 + auxH1) / sqrt(auxL2sol + auxH1sol);
+    Ntraingles[i] = Th.nt;
+    cout << "L2Error\t" << L2error[i] << endl;
+    Th = trunc(Th,1,split=2); //refine mesh
+    //plot(Th, wait=true);
+  }
+
+  //to build a data file
+  {
+    namefile = "dataK2.txt";
+    ofstream ff(namefile);
+    ff << "Number of Triangles\tL2Error\tH1Error\th" << endl;
+    for(int i = 0; i < n; i++){
+      ff << Ntraingles[i] << "\t" << L2error[i] << "\t" << H1error[i] << "\t" << Msize[i]<<endl;
+    }
+  }

@@ -1,0 +1,48 @@
+// Parameters
+int inside = 2; 
+int outside = 1;
+real d=0.1;
+func f=1.0;
+
+//Mesh
+border b1(t=0, 1){x=0; y=-t; label=outside;};
+border b2(t=0, 1){x=t; y=-1;label=outside;};
+border b3(t=0, 1){x=1; y=t-1;label=outside;};
+border b4(t=0, 1){x=1; y=t;label=outside;};
+border b5(t=0, 1){x=-t+1; y=1;label=outside;};
+border b6(t=0, 1){x=0; y=-t+1;label=outside;};
+
+border b7(t=0, 1){x= 0 + 0.1111111111111111 *t ; y= 0 + 0.0 *t;label=inside;};
+border b8(t=0, 1){x= 0.1111111111111111 + 0.05555555555555558 *t ; y= 0.0 + 0.09622504486493762 *t;label=inside;};
+border b9(t=0, 1){x= 0.16666666666666669 + 0.055555555555555525 *t ; y= 0.09622504486493762 + -0.09622504486493762 *t;label=inside;};
+border b10(t=0, 1){x= 0.2222222222222222 + 0.1111111111111111 *t ; y= 0.0 + 0.0 *t;label=inside;};
+border b11(t=0, 1){x= 0.3333333333333333 + 0.05555555555555558 *t ; y= 0.0 + 0.09622504486493764 *t;label=inside;};
+border b12(t=0, 1){x= 0.3888888888888889 + -0.05555555555555558 *t ; y= 0.09622504486493764 + 0.09622504486493759 *t;label=inside;};
+border b13(t=0, 1){x= 0.3333333333333333 + 0.1111111111111111 *t ; y= 0.19245008972987523 + 2.7755575615628914e-17 *t;label=inside;};
+border b14(t=0, 1){x= 0.4444444444444444 + 0.05555555555555558 *t ; y= 0.19245008972987526 + 0.09622504486493766 *t;label=inside;};
+border b15(t=0, 1){x= 0.5 + 0.05555555555555558 *t ; y= 0.2886751345948129 + -0.09622504486493766 *t;label=inside;};
+border b16(t=0, 1){x= 0.5555555555555556 + 0.11111111111111116 *t ; y= 0.19245008972987526 + 2.7755575615628914e-17 *t;label=inside;};
+border b17(t=0, 1){x= 0.6666666666666667 + -0.05555555555555558 *t ; y= 0.1924500897298753 + -0.09622504486493764 *t;label=inside;};
+border b18(t=0, 1){x= 0.6111111111111112 + 0.05555555555555558 *t ; y= 0.09622504486493764 + -0.09622504486493764 *t;label=inside;};
+border b19(t=0, 1){x= 0.6666666666666667 + 0.11111111111111105 *t ; y= 0.0 + 0.0 *t;label=inside;};
+border b20(t=0, 1){x= 0.7777777777777778 + 0.05555555555555558 *t ; y= 0.0 + 0.09622504486493766 *t;label=inside;};
+border b21(t=0, 1){x= 0.8333333333333334 + 0.05555555555555558 *t ; y= 0.09622504486493766 + -0.09622504486493766 *t;label=inside;};
+border b22(t=0, 1){x= 0.888888888888889 + 0.11111111111111105 *t ; y= 0.0 + 0.0 *t;label=inside;};
+
+int n = 5;
+mesh Th = buildmesh(b1(n) + b2(n) + b3(n) +  b4(n) + b5(n) + b6(n)  
++ b22(-n) + b21(-n) + b20(-n)+ b19(-n) + b18(-n) + b17(-n) + b16(-n) + b15(-n) + b14(-n) 
++ b13(-n) + b12(-n) + b11(-n) + b10(-n) + b9(-n) + b8(-n)+ b7(-n));
+plot(Th, wait=true);
+
+// Fespace
+fespace Vh(Th, P1);
+Vh u, v,ux,uy;
+
+solve smoothcrack(u, v)
+  = int2d(Th)(dx(u)*dx(v) + dy(u)*dy(v))
+  +int1d(Th,inside)(-d*N.y*dx(u)*dx(v)+d*N.x*dy(u)*dy(v) ) - int2d(Th)(f*v) + on(outside,u=0);
+plot(u, value=true, fill=true, wait=true);
+
+ux=dx(u);
+uy=dy(u);

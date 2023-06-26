@@ -1,0 +1,35 @@
+load "Element_P4"
+// Parameters
+int inside = 2; 
+int outside = 1;
+real d=0.1;
+func f=1.0;
+
+//Mesh
+border b1(t=0, 1){x=0; y=-t; label=outside;};
+border b2(t=0, 1){x=t; y=-1;label=outside;};
+border b3(t=0, 1){x=1; y=t-1;label=outside;};
+border b4(t=0, 1){x=1; y=t;label=outside;};
+border b5(t=0, 1){x=-t+1; y=1;label=outside;};
+border b6(t=0, 1){x=0; y=-t+1;label=outside;};
+
+border b7(t=0, 1){x= 0 + 0.3333333333333333 *t ; y= 0 + 0.0 *t;label=inside;};
+border b8(t=0, 1){x= 0.3333333333333333 + 0.16666666666666669 *t ; y= 0.0 + 0.2886751345948129 *t;label=inside;};
+border b9(t=0, 1){x= 0.5 + 0.16666666666666674 *t ; y= 0.2886751345948129 + -0.2886751345948129 *t;label=inside;};
+border b10(t=0, 1){x= 0.6666666666666667 + 0.33333333333333326 *t ; y= 0.0 + 0.0 *t;label=inside;};
+
+int n = 5;
+mesh Th = buildmesh(b1(n) + b2(n) + b3(n) +  b4(n) + b5(n) + b6(n) + b10(-n) + b9(-n) + b8(-n) + b7(-n));
+plot(Th, wait=true);
+
+// Fespace
+fespace Vh(Th, P4);
+Vh u, v,ux,uy;
+
+solve smoothcrack(u, v)
+  = int2d(Th)(dx(u)*dx(v) + dy(u)*dy(v))
+  +int1d(Th,inside)(-d*N.y*dx(u)*dx(v)+d*N.x*dy(u)*dy(v) ) - int2d(Th)(f*v) + on(outside,u=0);
+plot(u, value=true, fill=true, wait=true);
+
+ux=dx(u);
+uy=dy(u);

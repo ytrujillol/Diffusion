@@ -1,0 +1,29 @@
+   27 :
+   28 : ux=dx(u);
+   29 : uy=dy(u);
+   30 :
+   31 : //plot(u, [ux, uy]);ÿ sizestack + 1024 =2536  ( 1512 )
+ 
+  --  mesh:  Nb of Triangles =   3958, Nb of Vertices 2080
+  -- Solve :
+          min -3.73553e-51  max 0.0720748
+times: compile 0.092s, execution 0.637s,  mpirank:0
+ ######## We forget of deleting   58 Nb pointer,   0Bytes  ,  mpirank 0, memory leak =0
+ CodeAlloc : nb ptr  3951,  size :517168 mpirank: 0
+Ok: Normal End
+ try getConsole C:\Users\ytruj\OneDrive\Desktop\Unal\8 semestre\Numérico 2\Proyecto\kosh\FreeFem\Curvacurva.edp
+ save log in :  'C:\Users\ytruj\OneDrive\Desktop\Unal\8 semestre\Numérico 2\Proyecto\kosh\FreeFem\Curvacurva.log'
+wait enter ?  ######## We forget of deleting   58 Nb pointer,   0Bytes  ,  mpirank 0, memory leak =0
+ CodeAlloc : nb ptr  3951,  size :517168 mpirank: 0
+Ok: Normal End
+ try getConsole C:\Users\ytruj\OneDrive\Desktop\Unal\8 semestre\Numérico 2\Proyecto\kosh\FreeFem\Curvacurva.edp
+ save log in :  'C:\Users\ytruj\OneDrive\Desktop\Unal\8 semestre\Numérico 2\Proyecto\kosh\FreeFem\Curvacurva.log'
+wait enter ?  ######## We forget of deleting   52 Nb pointer,   0Bytes  ,  mpirank 0, memory leak =0
+ CodeAlloc : nb ptr  3951,  size :517168 mpirank: 0
+Ok: Normal End
+ try getConsole C:\Users\ytruj\OneDrive\Desktop\Unal\8 semestre\Numérico 2\Proyecto\kosh\FreeFem\Curvacurva.edp
+ save log in :  'C:\Users\ytruj\OneDrive\Desktop\Unal\8 semestre\Numérico 2\Proyecto\kosh\FreeFem\Curvacurva.log'
+wait enter ?  ######## We forget of deleting   52 Nb pointer,   0Bytes  ,  mpirank 0, memory leak =0
+ CodeAlloc : nb ptr  3951,  size :517168 mpirank: 0
+Ok: Normal End
+ try getConsole C:\Users\ytruj\OneDrive\Desktop\Unal\8 semestre\Numérico 2\Proyecto\kosh\FreeFem\Curvacurva.edp
